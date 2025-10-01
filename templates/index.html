@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <title>AI Drive Agent</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f4f7f6; margin: 40px; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #333; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        textarea { padding: 12px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px; resize: vertical; }
+        button { padding: 12px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        button:hover { background-color: #0056b3; }
+        #response { margin-top: 25px; padding: 20px; background: #e9ecef; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; }
+        .error { color: #d93025; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Agent with Google Drive Access 📁</h1>
+        {% if not logged_in %}
+        <div style="text-align: center; margin-bottom: 20px;">
+            <p>Please log in with Google to use the agent.</p>
+            <a href="/authorize"><button>Login with Google</button></a>
+        </div>
+        {% else %}
+        <form id="query-form">
+ 
+            <textarea name="query" rows="4" placeholder="Ask any question about your drive files e.g., 'What were the action items in the last project meeting doc?'"></textarea>
+            <button type="submit">Ask Agent</button>
+        </form>
+        <div id="response">
+            <p>Your answer will appear here...</p>
+        </div>
+        {% endif %}
+    </div>
+    <script>
+        if (document.getElementById('query-form')) {
+            document.getElementById('query-form').addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const query = event.target.elements.query.value;
+                const responseDiv = document.getElementById('response');
+                responseDiv.innerHTML = '<p>Thinking... Analyzing your request...</p>';
+                try {
+                    const response = await fetch('/ask', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ query: query })
+                    });
+                    if (!response.ok) {
+                        const errorResult = await response.json();
+                        throw new Error(errorResult.detail || 'An unknown error occurred');
+                    }
+                    const result = await response.json();
+                    responseDiv.innerHTML = `<p>${result.answer.replace(/\n/g, '<br>')}</p>`;
+                } catch (error) {
+                    responseDiv.innerHTML = `<p class="error">An error occurred: ${error.message}</p>`;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
