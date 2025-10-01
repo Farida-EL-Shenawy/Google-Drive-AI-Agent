@@ -9,7 +9,7 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
-
+# Import Google libraries for Drive and authentication
 from google.auth.transport.requests import Request as GoogleRequest
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
@@ -22,6 +22,7 @@ import google.generativeai as genai
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
+
 load_dotenv()
 
 try:
@@ -33,7 +34,7 @@ except Exception as e:
 SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 CREDENTIALS_FILE = 'credentials.json'
 TOKEN_FILE = 'token.pickle'
-REDIRECT_URI = os.getenv('REDIRECT_URI', 'http://127.0.0.1:8888/oauth2callback')
+REDIRECT_URI = 'http://127.0.0.1:8888/oauth2callback'
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
