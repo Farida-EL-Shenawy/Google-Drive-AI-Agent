@@ -33,7 +33,7 @@ except Exception as e:
 SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 CREDENTIALS_FILE = 'credentials.json'
 TOKEN_FILE = 'token.pickle'
-REDIRECT_URI = 'http://127.0.0.1:8888/oauth2callback'
+REDIRECT_URI = os.getenv('REDIRECT_URI', 'http://127.0.0.1:8888/oauth2callback')
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
